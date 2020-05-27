@@ -3,7 +3,6 @@ package com.adr.controllers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import sun.text.resources.no.CollationData_no;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,8 +27,9 @@ class IndexControllerTest {
     @Test
     @DisplayName("Test exception")
     void oupsHandler() {
-        assertTrue(("notimplemented").equals(controller.oupsHandler()), () -> "Wrong view returned" +
-                "Message to build  for my test");
 
+        assertThrows(ValueNotFoundException.class, () -> {
+            controller.oopsHandler();
+        });
     }
 }
