@@ -74,9 +74,9 @@ class SpecialitySDJpaServiceTest {
 
         when(specialtyRepository.findById(1L)).thenReturn(Optional.of(speciality));
 
-        Speciality foundSpecialtu = service.findById(1L);
+        Speciality foundSpecialty = service.findById(1L);
 
-        assertThat(foundSpecialtu).isNotNull();
+        assertThat(foundSpecialty).isNotNull();
 
         verify(specialtyRepository).findById(1L);
         verify(specialtyRepository).findById(anyLong());
