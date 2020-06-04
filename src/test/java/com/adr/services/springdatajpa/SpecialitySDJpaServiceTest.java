@@ -164,6 +164,7 @@ class SpecialitySDJpaServiceTest {
     void testSaveLambdaNoMatch() {
         //given
         final String MATCH_ME = "MATCH_ME";
+
         Speciality speciality = new Speciality();
         speciality.setDescription("No match");
 
