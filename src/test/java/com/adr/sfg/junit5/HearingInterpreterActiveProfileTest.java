@@ -1,18 +1,23 @@
 package com.adr.sfg.junit5;
 
-import com.adr.sfg.BaseConfig;
 import com.adr.sfg.HearingInterpreter;
-import com.adr.sfg.LaurelConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ActiveProfiles("base-test")
-@SpringJUnitConfig(classes = {BaseConfig.class, LaurelConfig.class})
-class HearingInterpreterLaurelTest {
+@ActiveProfiles("yanny")
+@SpringJUnitConfig(classes = HearingInterpreterActiveProfileTest.TestConfig.class)
+class HearingInterpreterActiveProfileTest {
+
+    @Configuration
+    @ComponentScan("com.adr.sfg")
+    static class TestConfig{
+    }
 
     @Autowired
     HearingInterpreter hearingInterpreter;
@@ -21,7 +26,7 @@ class HearingInterpreterLaurelTest {
     void whatIHeard() {
         String word = hearingInterpreter.whatIHeard();
 
-        assertEquals(word,"Laurel");
-
+        assertEquals(word, "Yanny");
     }
+
 }
