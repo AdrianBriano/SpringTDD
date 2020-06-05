@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Configuration
-class BaseConfig {
+public class BaseConfig {
 
     @Bean
     HearingInterpreter hearingInterpreter(WordProducer wordProducer){
