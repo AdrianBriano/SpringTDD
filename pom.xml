@@ -6,7 +6,6 @@
     <groupId>com.adr</groupId>
     <artifactId>spring-tdd</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
 
     <name>testing-spring</name>
     <packaging>war</packaging>
