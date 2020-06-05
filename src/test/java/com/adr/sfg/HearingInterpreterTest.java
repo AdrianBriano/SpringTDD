@@ -1,23 +1,30 @@
 package com.adr.sfg;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class HearingInterpreterTest {
 
     HearingInterpreter hearingInterpreter;
 
-    @Before
-    public void setUp() throws Exception {
-        hearingInterpreter = new HearingInterpreter(new LaurelWordProducer());
-    }
-
     @Test
-    public void whatIHeard() {
+    public void whatIHeardLaurel() {
+
+        hearingInterpreter = new HearingInterpreter(new LaurelWordProducer());
+
         String word = hearingInterpreter.whatIHeard();
 
         assertEquals(word, "Laurel");
+    }
+
+    @Test
+    public void whatIHeardYanny() {
+
+        hearingInterpreter = new HearingInterpreter(new YannyWordProducer());
+
+        String word = hearingInterpreter.whatIHeard();
+
+        assertEquals(word, "Yanny");
     }
 }
