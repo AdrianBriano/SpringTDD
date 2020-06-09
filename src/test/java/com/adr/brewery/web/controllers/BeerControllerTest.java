@@ -4,6 +4,10 @@ import com.adr.brewery.services.BeerService;
 import com.adr.brewery.web.model.BeerDto;
 import com.adr.brewery.web.model.BeerPagedList;
 import com.adr.brewery.web.model.BeerStyleEnum;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,11 +20,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -49,7 +56,7 @@ class BeerControllerTest {
     void setUp() {
         beerDto = BeerDto.builder().id(UUID.randomUUID())
                 .version(1)
-                .beerName("Beer2")
+                .beerName("Beer1")
                 .beerStyle(BeerStyleEnum.PALE_ALE)
                 .price(new BigDecimal("12.99"))
                 .quantityOnHand(4)
@@ -57,17 +64,28 @@ class BeerControllerTest {
                 .createdDate(OffsetDateTime.now())
                 .build();
 
-        mockMvc = MockMvcBuilders.standaloneSetup(beerController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(beerController)
+                        .setMessageConverters(jackson2HttpMessageConverter())
+                        .build();
     }
 
     @Test
     void testGetBeerById() throws Exception {
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ");
+
         given(beerService.findBeerById(any())).willReturn(beerDto);
 
-        mockMvc.perform(get("/api/v1/beer/" + beerDto.getId()))
+        MvcResult result = mockMvc.perform(get("/api/v1/beer/" + beerDto.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(beerDto.getId().toString())));
+                .andExpect(jsonPath("$.id", is(beerDto.getId().toString())))
+                .andExpect(jsonPath("$.beerName", is("Beer1")))
+                .andExpect(jsonPath("$.createdDate",
+                        is(dateTimeFormatter.format(beerDto.getCreatedDate()))))
+                .andReturn();
+
+        System.out.println(result.getResponse().getContentAsString());
     }
 
     @DisplayName("List ops - ")
@@ -115,5 +133,17 @@ class BeerControllerTest {
                     .andExpect(jsonPath("$.content", hasSize(2)))
                     .andExpect(jsonPath("$.content[0].id", is(beerDto.getId().toString())));
         }
+    }
+
+    public MappingJackson2HttpMessageConverter jackson2HttpMessageConverter(){
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        objectMapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+        objectMapper.registerModule(new JavaTimeModule());
+
+        return new MappingJackson2HttpMessageConverter(objectMapper);
     }
 }
