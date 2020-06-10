@@ -4,26 +4,16 @@ import com.adr.brewery.services.BeerService;
 import com.adr.brewery.web.model.BeerDto;
 import com.adr.brewery.web.model.BeerPagedList;
 import com.adr.brewery.web.model.BeerStyleEnum;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -117,7 +107,7 @@ class BeerControllerTest {
                     .createdDate(OffsetDateTime.now())
                     .build());
 
-            beerPagedList = new BeerPagedList(beers, PageRequest.of(1,1), 2L);
+            beerPagedList = new BeerPagedList(beers, PageRequest.of(1, 1), 2L);
 
             given(beerService.listBeers(beerNameArgumentCaptor.capture(), beerStyleEnumArgumentCaptor.capture(),
                     pageRequestArgumentCaptor.capture())).willReturn(beerPagedList);
@@ -127,7 +117,7 @@ class BeerControllerTest {
         @Test
         void testListBeers() throws Exception {
             mockMvc.perform(get("/api/v1/beer")
-                            .accept(MediaType.APPLICATION_JSON))
+                    .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.content", hasSize(2)))
